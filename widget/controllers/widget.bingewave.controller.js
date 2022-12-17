@@ -298,12 +298,19 @@
 					APIService.create_event(event, function (result) {
 						if (result.data.status === 'success') {
 							$scope.showNewEventTitle = false;
-							if(event.type === "1"){
+							console.log(result, event.type)
+							if(event.type === "7"){
 								$scope.show_stream = true;
 								$scope.show_conference = false;
 								$scope.stream_id = result.data.data.id;
 								$scope.event_id = result.data.data.id;
-								$scope.stream_url = "https://widgets.bingewave.com/stream/" + result.data.data.id + "?elementid=" + result.data.data.id + ":59&amp;env=prod"
+								$scope.stream_url = result.data.data.embed_livestream;
+								$scope.stream_embed = $sce.trustAsHtml($scope.stream_url);
+						setTimeout(() => {
+							console.log("Test I am running");
+							BingewaveConnector.parseTags();
+						}, 1000)
+								//$scope.stream_url = "https://widgets.bingewave.com/stream/" + result.data.data.id + "?elementid=" + result.data.data.id + ":59&amp;env=prod"
 							}else{
 								$scope.show_conference = true;
 								$scope.show_stream = false;
@@ -322,10 +329,10 @@
 				}
 				$scope.goToEvent = function(event){
                     // BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
-
 					$scope.event = event;
 					$scope.showNewEventTitle = false;
 					$scope.event_id = event.id;
+					$scope.selected_event = '<bw:widget env="prod" type="stream" id="09fcd41b-da1a-49ae-abeb-a35db5160105"></bw:widget>';
 					console.log(event.type)
 					if(event.type === "1" || event.pre_recorded_contents.length > 0 || event.pre_recorded_content){
 						console.log("event is stream")
@@ -338,7 +345,6 @@
 						$scope.stream_id = event.id;
 						$scope.stream_url = event.embed_livestream;
 						//$scope.stream_url = "https://widgets.bingewave.com/stream/" + $scope.event_id + "?elementid=" + $scope.event_id + ":59&amp;env=prod"
-						$scope.selected_event = '<bw:widget env="prod" type="stream" id="09fcd41b-da1a-49ae-abeb-a35db5160105"></bw:widget>';
 						$scope.stream_embed = $sce.trustAsHtml($scope.selected_event);
 						setTimeout(() => {
 							console.log("Test I am running");
@@ -350,7 +356,6 @@
 						$scope.show_stream = false;
 						//$scope.conference_url = event.webview_video_chat;
 						$scope.conference_url = event.embed_video_chat;
-						$scope.selected_event = '<bw:widget env="prod" type="stream" id="09fcd41b-da1a-49ae-abeb-a35db5160105"></bw:widget>';
 						$scope.stream_embed = $sce.trustAsHtml($scope.selected_event); 
 						setTimeout(() => {
 							console.log("Test I am running");
