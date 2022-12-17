@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="BingewaveAngularJs">
+
+<head>
+	<meta name="buildfire" content="disableFastClick,disableSelect">
+	<!-- Plugin CSS -->
+
+	<!-- build:bundleCSSFiles  -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+		rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+		crossorigin="anonymous">
+	<link href="../../../styles/components/skeleton/skeleton.css" />
+	<link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+		integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+	<!-- endbuild -->
+
+	<!-- JS -->
+
+
+	<script src="../../../scripts/buildfire.min.js"></script>
+	<script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+	<script src="../../../scripts/buildfire/components/drawer/drawer.js"></script>
+	<script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
+	<script src="../../../scripts/buildfire/services/camera/camera.js"></script>
+	<script src="../../../../scripts/tinymce/tinymce.min.js"></script>
+	<script src="../../../scripts/buildfire/components/popup/popup.js"></script>
+	<script src="../../../scripts/buildfire/components/skeleton/skeleton.js"></script>
+	<script src="../../../scripts/buildfire/services/camera/barcodeScanner.js"></script>
+	<script src="../../../scripts/angular/angular.min.js"></script>
+	<script src="../../../scripts/angular/angular-route.min.js"></script>
+	<script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
+	<script src="../../../scripts/angular/angular-animate.min.js"></script>
+	<script src="https://code.ionicframework.com/collide/0.0.4/collide.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+		integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+		integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+		crossorigin="anonymous"></script>
+
+
+	<!-- build:bundleJSFiles  -->
+	<script src="assets/js/moment.js"></script>
+	<script src="modals.js"></script>
+	<script src="app.js"></script>
+	<script src="services/app.service.js"></script>
+	<script src="services/api.service.js"></script>
+	<script src="services/request.service.js"></script>
+	<script src="controllers/widget.bingewave.controller.js"></script>
+
+	<script src="enums.js"></script>
+	<script src="assets/js/filters.js"></script>
+	<script src="../../../scripts/buildfire/components/drawer/drawer.js"></script>
+	<script src="./assets/js/shared/stringsConfig.js"></script>
+	<script type="text/javascript" src="assets/js/connect.js"></script>
+	<!-- endbuild -->
+	<script>
+		moment().format();
+		BingewaveConnector.init({auth_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU'});
+		// let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2N…Q2In0.tG9AfzDTs0-dXCaJXT2nhvfcf4ZNL2zJhweRvQOA84c";
+		// BingewaveConnector.setAuthToken(token);
+	</script>
+	<!-- Meta -->
+	<meta charset="utf-8">
+
+</head>
+
+<body id="test" class="scrollable">
+	<div class="main_view" style="height: 100%; overflow-y: auto !important">
+		<div ng-view></div>
+	</div>
+	<script>
+		buildfire.appearance.titlebar.show();
+	</script>
+	<script src="../../../scripts/buildfire/components/web-components/buildfire-components.js">
+	</script>
+	<script src="../../../scripts/buildfire/services/notifications/pushNotifications.js"></script>
+	<script src="../../../scripts/buildfire/components/toast/toast.js"></script>
+</body>
+
+</html>

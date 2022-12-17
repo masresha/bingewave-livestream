@@ -1,0 +1,16 @@
+<div ng-controller="MainSettingsCtrl" ng-init="init()">
+	<form class="padded-sm" name="mainSettingsForm">
+		<h1>View Permissions</h1>
+		<div class="input-control side-label">
+			<label for="followLeave">Disable Home Text</label>
+			<div>
+				<div class="checkbox checkbox-primary no-label">
+					<input id="followLeave" type="checkbox" ng-model="data.disableHomeText"
+						ng-change="save()">
+					<label for="followLeave"></label>
+				</div>
+			</div>
+		</div>
+	</form>
+	<!-- <div class="padded-sm" id="actions"></div> -->
+</div>
