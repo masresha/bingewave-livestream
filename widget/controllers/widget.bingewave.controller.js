@@ -5,11 +5,11 @@
 		.controller('BingewaveCtrl', ['$sce', '$scope', 'APIService', 'RequestService',
 			'SocialDataStore', 'Modals', 'Buildfire', '$rootScope', 'Location', 'EVENTS',
 			'GROUP_STATUS', 'MORE_MENU_POPUP', 'FILE_UPLOAD', '$modal', 'SocialItems', '$q',
-			'$anchorScroll', '$location', '$timeout', 'Util', 'SubscribedUsersData',
+			'$anchorScroll', '$location', '$timeout', 'Util', 'SubscribedUsersData', '$window',
 			function ($sce, $scope, APIService, RequestService, SocialDataStore,
 				Modals, Buildfire, $rootScope, Location, EVENTS, GROUP_STATUS,
 				MORE_MENU_POPUP, FILE_UPLOAD, $modal, SocialItems, $q, $anchorScroll,
-				$location, $timeout, util, SubscribedUsersData) {
+				$location, $timeout, util, SubscribedUsersData, $window) {
 				var WidgetBingewave = this;
 				$scope.show_conference = false;
 				$scope.show_stream = false;
@@ -83,7 +83,7 @@
 														if (err) return console.error("Error while saving auth token", err);
 														console.log("Insert successful", result);
 														$scope.authToken = result.data.data.auth_token;
-														BingewaveConnector.init({auth_token : result.data.data.auth_token });
+														$window.BingewaveConnector.init({auth_token : result.data.data.auth_token });
 													});
 
 												console.log(result.data.data.auth_token);
@@ -123,7 +123,7 @@
 					}else{
 						console.log(result.data);
 						$scope.authToken = result.data;
-						BingewaveConnector.init({auth_token : result.data.token});
+						$window.BingewaveConnector.init({auth_token : result.data.token});
 					} 
 				  });
 
@@ -306,9 +306,10 @@
 								$scope.event_id = result.data.data.id;
 								$scope.stream_url = result.data.data.embed_livestream;
 								$scope.stream_embed = $sce.trustAsHtml($scope.stream_url);
+								$window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
 						setTimeout(() => {
 							console.log("Test I am running");
-							BingewaveConnector.parseTags();
+							$window.BingewaveConnector.parseTags();
 						}, 1000)
 								//$scope.stream_url = "https://widgets.bingewave.com/stream/" + result.data.data.id + "?elementid=" + result.data.data.id + ":59&amp;env=prod"
 							}else{
@@ -346,9 +347,10 @@
 						$scope.stream_url = event.embed_livestream;
 						//$scope.stream_url = "https://widgets.bingewave.com/stream/" + $scope.event_id + "?elementid=" + $scope.event_id + ":59&amp;env=prod"
 						$scope.stream_embed = $sce.trustAsHtml($scope.selected_event);
+						$window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
 						setTimeout(() => {
 							console.log("Test I am running");
-							BingewaveConnector.parseTags();
+							$window.BingewaveConnector.parseTags();
 						}, 1000)
 					}else{
 						console.log("event is not stream")
@@ -357,9 +359,10 @@
 						//$scope.conference_url = event.webview_video_chat;
 						$scope.conference_url = event.embed_video_chat;
 						$scope.stream_embed = $sce.trustAsHtml($scope.selected_event); 
+						$window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
 						setTimeout(() => {
 							console.log("Test I am running");
-							BingewaveConnector.parseTags();
+							$window.BingewaveConnector.parseTags();
 						}, 1000)
 					}
 				}
