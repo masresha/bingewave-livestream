@@ -33,6 +33,7 @@
 		service.CallAPI = CallAPI;
 		service.CallAPI2 = CallAPI2;
 		service.CallAPI3 = CallAPI3;
+		service.CallAPI4 = CallAPI4;
 		service.getAPIUrl = getAPIUrl;
 		service.getPreferences = getPreferences;
 		return service;
@@ -63,7 +64,6 @@
 			});
 
 		}
-
 		function CallAPI2(data, url, success_callback, failure_callback, method, api_url,
 			isFile) {
 			var urlParam = method && method == 'GET' && data ? '?' + jQuery.param(data) : '';
@@ -92,7 +92,6 @@
 			});
 
 		}
-
 		function CallAPI3(data, url, success_callback, failure_callback, method, api_url,
 			isFile) {
 			var urlParam = method && method == 'GET' && data ? '?' + jQuery.param(data) :
@@ -103,6 +102,34 @@
 				headers: {
 					'Content-Type': isFile ? undefined : 'application/json',
 					'Authorization': Preferences.auth_token
+				},
+				data: data
+			}
+			$http(req).then(function (response) {
+				success_callback(response);
+			}, function (response) {
+				if (response.status) {
+					switch (response.status) {
+						case 401: //Unauthorized
+							$rootScope.logout();
+							break;
+					}
+				}
+				if (failure_callback)
+					failure_callback(response);
+			});
+
+		}
+		function CallAPI4(data, url, success_callback, failure_callback, method, api_url,
+			isFile) {
+			var urlParam = method && method == 'GET' && data ? '?' + jQuery.param(data) :
+				'';
+			var req = {
+				method: method ? method : 'POST',
+				url: api_url ? api_url + url + urlParam : APIUrl + url + urlParam,
+				headers: {
+					'Content-Type': isFile ? undefined : 'application/json',
+					'Authorization': data.auth_token
 				},
 				data: data
 			}

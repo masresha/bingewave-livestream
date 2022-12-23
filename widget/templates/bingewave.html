@@ -7,19 +7,20 @@
 	</div>
 
 	<h3 ng-if="show_conference" style="text-align: center;">{{event.title}} <button type="button" class="btn btn-primary" ng-click="home()">Leave</button></h3>
+
 	<!-- <iframe allow="camera; microphone" width="100%" height="600" ng-if="show_conference"
 		ng-src="{{trustSrc(conference_url)}}"></iframe>
 	<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
 		ng-if="show_stream" ng-src="{{trustSrc(stream_url)}}" scrolling="no" frameborder="0"
 		onload="scroll(0,0)" id="{{event_id}}:59" style="width: 100%; height: 616px;"
 		height="616"></iframe> -->
-	<div allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
+	<!-- <div allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
 	ng-if="show_stream" scrolling="no" frameborder="0"
 	onload="scroll(0,0)" id="{{event_id}}:59" style="width: 100%; height: 616px;"
-	height="616" ng-bind-html="stream_embed" allow="camera; microphone"></div>
+	height="616" ng-bind-html="stream_embed" allow="camera; microphone"></div> -->
 
 	<div allow="camera; microphone" width="100%" height="600"
-	ng-if="show_conference" ng-bind-html="stream_embed"></div>
+	 ng-bind-html="stream_embed"></div>
 
 
 	<!-- <button ng-if="!show_conference" type="button" class="btn btn-primary"

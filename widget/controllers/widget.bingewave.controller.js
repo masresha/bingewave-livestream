@@ -44,7 +44,17 @@
 				$scope.pinnedPost = "";
 				$scope.offset = 0;
 				$scope.pageSize = 10;
-				
+				$window.BingewaveConnector.init();
+				var queryParam = {
+					organizer_id: RequestService.getPreferences().organizer_id,
+					results_per_page: $scope.pageSize,
+					order_keywords: "DESC",
+					order_by: "date",
+					offset: $scope.offset,
+					is_private:0,
+					// type: "7"
+				}
+				// $scope.authToken = {};
 				// buildfire.userData.save(
                 //     $scope.authToken,
                 //     "bingeWaveAuthToken",
@@ -75,31 +85,44 @@
 										}
 										APIService.get_distributor_token(credentials, function (
 											result) {
-												$scope.authToken = { token : result.data.data.auth_token };
-												buildfire.userData.save(
-													$scope.authToken,
-													"bingeWaveAuthToken",
-													(err, result) => {
-														if (err) return console.error("Error while saving auth token", err);
-														console.log("Insert successful", result);
-														$scope.authToken = result.data.data.auth_token;
-														$window.BingewaveConnector.init({auth_token : result.data.data.auth_token });
-													});
-
 												console.log(result.data.data.auth_token);
 												console.log(result.data.data.organizer.id);
 												var dataSyncOrganizer = {
 													"first_name": user.firstName,
-													"first_name": user.lastName,
-													"email": user.email
+													"last_name": user.lastName,
+													"email": user.email,
+													"organizer_id": result.data.data.organizer.id,
+													"auth_token": result.data.data.auth_token
 												}
 												var dataSetRole = {
 													"account_id": result.data.data.organizer.id,
 													"role": "is_member"
 												}
 												APIService.sync_organizer(dataSyncOrganizer, function (
-													result) {
-														console.log(result.data)
+													res) {
+														setTimeout(function() {
+															console.log("user token should be here " + res.data.auth_token);
+															$scope.authToken = { token : res.data.data.auth_token};
+															buildfire.userData.save(
+																$scope.authToken,
+																"bingeWaveAuthToken",
+																(err, result) => {
+																	if (err) return console.error("Error while saving auth token", err);
+																	console.log("Insert successful", result);
+																	APIService.get_all_events(queryParam, function (result) {
+																		$scope.events = result.data.data;
+																		console.log($scope.events)
+																		$scope.loading = false;
+												   
+																   }, function (response) {
+																	   console.log(response);
+																   
+																   });
+																	// $scope.authToken = resp.data.auth_token;
+																	// $window.BingewaveConnector.init({auth_token : result.data.data.auth_token });
+																});
+														  }, 3000);
+
 														APIService.set_role(dataSetRole, function (
 															result) {
 																console.log(result.data)
@@ -123,42 +146,34 @@
 					}else{
 						console.log(result.data);
 						$scope.authToken = result.data;
-						$window.BingewaveConnector.init({auth_token : result.data.token});
+						queryParam.auth_token = $scope.authToken.token;
+						APIService.get_all_events(queryParam, function (result) {
+							$scope.events = result.data.data;
+							console.log($scope.events)
+							$scope.loading = false;
+							$window.BingewaveConnector.setAuthToken($scope.authToken.token);
+							var profile_token = {
+								auth_token: $scope.authToken.token
+							}
+							APIService.get_my_profile(profile_token, function (result) {
+								$scope.profile = result.data.data;
+								console.log($scope.profile)
+							}, function (response) {
+								console.log(response)
+							});
+					   }, function (response) {
+						   console.log(response);
+					   
+					   });
+						//$window.BingewaveConnector.init({auth_token : result.data.token});
 					} 
 				  });
 
-			
-				
-				// APIService.get_my_profile(null, function (result) {
-				// 	$scope.profile = result.data.data;
-				// }, function (response) {
-				// 	console.log(response)
-				// });
-
-				let queryParam = {
-					organizer_id: RequestService.getPreferences().organizer_id,
-					results_per_page: $scope.pageSize,
-					order_keywords: "DESC",
-					order_by: "date",
-					offset: $scope.offset,
-					is_private:0,
-					// type: "7"
-				}
-				
-				APIService.get_all_events(queryParam, function (result) {
-					 $scope.events = result.data.data;
-					 console.log($scope.events)
-					 $scope.loading = false;
-
-				}, function (response) {
-					console.log(response);
-				
-				});
 
 				$scope.showMore = function(){
 					$scope.loading = true;
 					$scope.offset = $scope.offset + 5;
-					let queryParam = {
+					var queryParam = {
 						organizer_id: RequestService.getPreferences().organizer_id,
 						results_per_page: $scope.pageSize,
 						order_keywords: "DESC",
@@ -166,6 +181,7 @@
 						offset: $scope.offset,
 						is_private:0
 					}
+					queryParam.auth_token = $scope.authToken.token;
 					APIService.get_all_events(queryParam, function (result) {
 						$scope.events = result.data.data;
 						$scope.loading = false;
@@ -204,6 +220,7 @@
 					$scope.show_stream = false;
 					$scope.conference_url = null;
 					$scope.stream_url = null;
+					queryParam.auth_token = $scope.authToken.token;
 					APIService.get_all_events(queryParam, function (result) {
 						 $scope.events = result.data.data;
 						 $scope.loading = false;
@@ -292,13 +309,24 @@
 							event_description: $scope.event.event_description,
 							private_event: $scope.event.private_event,
 							requested_date_1: $scope.event.requested_date_1,
-
+							auth_token: $scope.authToken.token
 					    }
 
 					APIService.create_event(event, function (result) {
 						if (result.data.status === 'success') {
 							$scope.showNewEventTitle = false;
-							console.log(result, event.type)
+							console.log(result, event.type);
+
+							var moderator_data = {
+								account_id: $scope.profile.id,
+								event_id: result.data.data.id
+							}
+							APIService.make_moderator(moderator_data, function (result) {
+								console.log("make moderator data" + result);
+							}, function (response) {
+								console.log(response)
+							});
+
 							if(event.type === "7"){
 								$scope.show_stream = true;
 								$scope.show_conference = false;
@@ -306,11 +334,11 @@
 								$scope.event_id = result.data.data.id;
 								$scope.stream_url = result.data.data.embed_livestream;
 								$scope.stream_embed = $sce.trustAsHtml($scope.stream_url);
-								$window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
-						setTimeout(() => {
-							console.log("Test I am running");
-							$window.BingewaveConnector.parseTags();
-						}, 1000)
+								// $window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
+								setTimeout(() => {
+									console.log("Test I am running");
+									$window.BingewaveConnector.parseTags();
+								}, 1000)
 								//$scope.stream_url = "https://widgets.bingewave.com/stream/" + result.data.data.id + "?elementid=" + result.data.data.id + ":59&amp;env=prod"
 							}else{
 								$scope.show_conference = true;
@@ -318,7 +346,6 @@
 								$scope.conference_url = result.data.data.webview_video_chat;
 								$scope.event_id = result.data.data.id;
 							}						
-
 						}
 					}, function (response) {
 						$scope.show_conference = false;
@@ -329,42 +356,81 @@
 					$scope.showNewEventTitle = false;
 				}
 				$scope.goToEvent = function(event){
-                    // BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
-					$scope.event = event;
-					$scope.showNewEventTitle = false;
-					$scope.event_id = event.id;
-					$scope.selected_event = '<bw:widget env="prod" type="stream" id="09fcd41b-da1a-49ae-abeb-a35db5160105"></bw:widget>';
-					console.log(event.type)
-					if(event.type === "1" || event.pre_recorded_contents.length > 0 || event.pre_recorded_content){
-						console.log("event is stream")
-						console.log(event.pre_recorded_content)
-						console.log(event.pre_recorded_contents.length)
-						console.log(event.type)
+					$scope.is_moderator = false;
+					$scope.is_participant = false;
+					$scope.is_panelist = false;
 
-						$scope.show_stream = true;
-						$scope.show_conference = false;
-						$scope.stream_id = event.id;
-						$scope.stream_url = event.embed_livestream;
-						//$scope.stream_url = "https://widgets.bingewave.com/stream/" + $scope.event_id + "?elementid=" + $scope.event_id + ":59&amp;env=prod"
-						$scope.stream_embed = $sce.trustAsHtml($scope.selected_event);
-						$window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
-						setTimeout(() => {
-							console.log("Test I am running");
-							$window.BingewaveConnector.parseTags();
-						}, 1000)
-					}else{
-						console.log("event is not stream")
-						$scope.show_conference = true;
-						$scope.show_stream = false;
-						//$scope.conference_url = event.webview_video_chat;
-						$scope.conference_url = event.embed_video_chat;
-						$scope.stream_embed = $sce.trustAsHtml($scope.selected_event); 
-						$window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
-						setTimeout(() => {
-							console.log("Test I am running");
-							$window.BingewaveConnector.parseTags();
-						}, 1000)
+					var info = {
+						user_id: $scope.profile.id,
+						event_id: event.id
 					}
+					APIService.get_user_status(info, function (result) {
+						console.log(result)
+						if(result.data.data.is_moderator === "1"){
+							$scope.is_moderator = true;
+							$scope.is_participant = false;
+							$scope.is_panelist = false;
+						}else if(result.data.data.is_panelist === "1"){
+							$scope.is_moderator = false;
+							$scope.is_participant = false;
+							$scope.is_panelist = true;
+						}else if(result.data.data.is_participant === "1"){
+							$scope.is_moderator = false;
+							$scope.is_participant = true;
+							$scope.is_panelist = false;
+						}
+						console.log($scope.is_moderator + "is_moderator")
+						console.log($scope.is_participant + "is_participant")
+						console.log($scope.is_panelist + "is_panelist")
+						$scope.event = event;
+						$scope.showNewEventTitle = false;
+						$scope.event_id = event.id;
+						// $scope.selected_event = '<bw:widget env="prod" type="webrtc" id="55d817ee-bb48-455f-a7a8-819af04681fa"></bw:widget>';
+						console.log(event.type)
+						if(event.type === "1" || event.pre_recorded_contents.length > 0 || event.pre_recorded_content){
+							console.log("event is stream")
+							console.log(event.pre_recorded_content)
+							console.log(event.pre_recorded_contents.length)
+							console.log(event.type);
+							$scope.show_stream = true;
+							$scope.show_conference = false;
+							$scope.stream_id = event.id;
+							if($scope.is_moderator){
+								$scope.stream_url = event.embed_video_chat;
+							}else{
+								$scope.stream_url = event.embed_broadcast;
+							}
+							//$scope.stream_url = "https://widgets.bingewave.com/stream/" + $scope.event_id + "?elementid=" + $scope.event_id + ":59&amp;env=prod"
+							$scope.stream_embed = $sce.trustAsHtml($scope.stream_url);
+							// $window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
+							setTimeout(() => {
+								console.log("Test I am running");
+								$window.BingewaveConnector.parseTags();
+							}, 1000)
+						}else{
+							console.log("event is not stream")
+							$scope.show_conference = true;
+							$scope.show_stream = false;
+							//$scope.conference_url = event.webview_video_chat;
+							if($scope.is_moderator){
+								$scope.conference_url = event.embed_video_chat;
+								console.log("is moderatot")
+							}else{
+								console.log("is not moderatot")
+								$scope.conference_url = event.embed_broadcast;
+							}
+							$scope.stream_embed = $sce.trustAsHtml($scope.conference_url); 
+							// $window.BingewaveConnector.setAuthToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzAyNTEzNDgsImV4cCI6MTc2MDI1MTM0OCwiaXNzIjoibG9jYWxob3N0IiwicmVmZXJlbmNlX2lkIjoiM2E4MDE2ZWItMjNkNC00Mzk1LTkyZTItMjgzNmJiM2I5Y2MxIiwidHlwZSI6ImRpc3RyaWJ1dG9yIiwiZGlkIjoiOThlYjVjYjMtMmQ3My00ODYwLWE5M2UtMDQxMTQ0NWY3YjBkIn0.xe0GEyyPaIOqs3AUB2xcpsX8M-aoOnmGciBdEfdghEU");
+							setTimeout(() => {
+								console.log("Test I am running");
+								$window.BingewaveConnector.parseTags();
+							}, 1000);
+						}
+				   }, function (response) {
+					   console.log(response)
+				   });
+
+
 				}
 
 				$scope.getMyVideo = function () {
@@ -483,7 +549,8 @@
 				}
 
 				$scope.getAllEvents = function () {
-					APIService.get_all_events(null, function (
+					queryParam.auth_token = $scope.authToken.token;
+					APIService.get_all_events(queryParam, function (
 						result) {
 						// if (result.data.status === 'success') {
 						// 	$scope.messages = result.data.data;
@@ -529,7 +596,7 @@
 
 				WidgetBingewave.setAppTheme = function () {
 					buildfire.appearance.getAppTheme((err, obj) => {
-						let elements = document.getElementsByTagName('svg');
+						var elements = document.getElementsByTagName('svg');
 						for (var i = 0; i < elements.length; i++) {
 							elements[i].style.setProperty("fill", obj.colors
 								.icons, "important");
@@ -544,7 +611,7 @@
 						WidgetBingewave.setSettings(response);
 						setTimeout(function () {
 							if (!response.data.appSettings.disableHomeText) {
-								// let wallSVG = document.getElementById("WidgetBingewaveSvg")
+								// var wallSVG = document.getElementById("WidgetBingewaveSvg")
 								// if (wallSVG) {
 								// 	wallSVG.style.setProperty("fill", WidgetBingewave.appTheme.icons, "important");
 								// }

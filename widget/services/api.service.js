@@ -26,9 +26,29 @@
         service.set_role = set_role;
         service.get_distributor_token = get_distributor_token;
         service.create_new_organizer = create_new_organizer;
+        service.get_user_status = get_user_status;
+        service.make_moderator = make_moderator;
 
         return service;
-        
+
+        function make_moderator(param, callback, fallback) {
+            RequestService.CallAPI3(param, 'events/' + param.event_id + '/makeModerator', function (result) {
+                if (result) {
+                    callback(result);
+                }
+            }, fallback);
+        }
+
+
+        function get_user_status(param, callback, fallback) {
+            RequestService.CallAPI3(param, 'events/' + param.event_id + '/getUserStatus/' + param.user_id, function (result) {
+                if (result) {
+                    callback(result);
+                }
+            }, fallback, 'GET');
+        }
+
+
         function create_new_organizer(param, callback, fallback) {
             RequestService.CallAPI3(param, '/organizers', function (result) {
                 if (result) {
@@ -56,7 +76,7 @@
 
 
         function sync_organizer(param, callback, fallback) {
-            RequestService.CallAPI3(param, '/auth/syncToOrganizer', function (result) {
+            RequestService.CallAPI4(param, '/auth/syncToOrganizer', function (result) {
                 if (result) {
                     callback(result);
                 }
@@ -74,7 +94,7 @@
 
 
         function get_my_profile(param, callback, fallback) {
-            RequestService.CallAPI3(param, 'accounts/me', function (result) {
+            RequestService.CallAPI4(param, 'accounts/me', function (result) {
                 if (result) {
                     callback(result);
                 }
@@ -89,7 +109,6 @@
             }, fallback);
         }
 
-
         function mute_all_participants(param, callback, fallback) {
             RequestService.CallAPI3(param, 'events/' + param.event_id + '/setUserAudioMute', function (result) {
                 if (result) {
@@ -98,7 +117,6 @@
                 }
             }, fallback);
         }
-
 
         function send_chat_messages(param, callback, fallback) {
             RequestService.CallAPI3(param, 'events/' + param.event_id + '/messages', function (result) {
@@ -109,7 +127,6 @@
             }, fallback);
         }
 
-
         function get_chat_messages(param, callback, fallback) {
             RequestService.CallAPI3(param, 'events/' + param + '/messages', function (result) {
                 if (result) {
@@ -118,7 +135,6 @@
                 }
             }, fallback, 'GET');
         }
-
 
         function stop_broadcast(param, callback, fallback) {
             RequestService.CallAPI3(param, 'events/' + param + '/stopBroadcasting', function (result) {
@@ -148,7 +164,7 @@
         }
 
         function get_all_events(param, callback, fallback) {
-            RequestService.CallAPI3(param, 'events', function (result) {
+            RequestService.CallAPI4(param, 'events', function (result) {
                 if (result) {
                     callback(result);
                 }
