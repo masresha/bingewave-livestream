@@ -304,7 +304,8 @@
                         url: api_url ? api_url + url + urlParam : APIUrl + url + urlParam,
                         headers: {
                             'Content-Type': isFile ? undefined : 'application/json',
-                            'Authorization':  Preferences.auth_token,
+                            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjE1MTI2MDQsImV4cCI6MTc1MTUxMjYwNCwiaXNzIjoibG9jYWxob3N0Iiwid2lkZ2V0X3Rva2VuIjp0cnVlLCJkaXN0cmlidXRvcl9pZCI6bnVsbCwidHlwZSI6ImFjY291bnQifQ.TJstbI2I_TqP8caVsAVeVYBlgy_b9Bg42FyqL-ZAPII',
+
                         },
                         data: data
                     }
