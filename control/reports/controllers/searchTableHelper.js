@@ -207,13 +207,15 @@ class SearchTableHelper {
 					if (e) console.error(e);
 
 					if (data.selectedButton.key == "yes") {
-						tr.classList.add("hidden");
-						buildfire.publicData.update(obj.id, { $set: { deletedOn: new Date() } }, this.tag, e => {
-							if (e)
-								tr.classList.remove("hidden");
-							else
-								t.onRowDeleted(obj, tr);
-						});
+						console.log("event deleted", obj)
+						t.onRowDeleted(obj, tr);
+						//tr.classList.add("hidden");
+						// buildfire.publicData.update(obj.id, { $set: { deletedOn: new Date() } }, this.tag, e => {
+						// 	if (e)
+						// 		tr.classList.remove("hidden");
+						// 	else
+						// 		t.onRowDeleted(obj, tr);
+						// });
 
 					}
 				});
@@ -226,13 +228,15 @@ class SearchTableHelper {
 	onSearchSet(options) {
 		return options;
 	}
-	onRowAdded(obj, tr) { }
+	onRowAdded(obj, tr) { 
+		
+	}
 
 	onEditRow(obj, tr) {
 		console.log("Edit row", obj);
 	}
 
-	onRowDeleted(obj, tr) {
+	onRowDeleted(obj) {
 		console.log("Record Delete", obj);
 	}
 

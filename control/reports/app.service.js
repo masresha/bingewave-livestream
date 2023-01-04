@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire) {
-    angular.module('socialPluginContent')
+    angular.module('socialPluginSettings')
         .provider('Buildfire', [function () {
             var Buildfire = this;
             Buildfire.$get = function () {
@@ -304,7 +304,7 @@
                         url: api_url ? api_url + url + urlParam : APIUrl + url + urlParam,
                         headers: {
                             'Content-Type': isFile ? undefined : 'application/json',
-                            'Authorization':  Preferences.auth_token,
+                            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjE1MTI2MDQsImV4cCI6MTc1MTUxMjYwNCwiaXNzIjoibG9jYWxob3N0Iiwid2lkZ2V0X3Rva2VuIjp0cnVlLCJkaXN0cmlidXRvcl9pZCI6bnVsbCwidHlwZSI6ImFjY291bnQifQ.TJstbI2I_TqP8caVsAVeVYBlgy_b9Bg42FyqL-ZAPII',
                         },
                         data: data
                     }
@@ -327,23 +327,15 @@
         }])
         .factory("ApService", ['ReqService','$rootScope', '$http', function (ReqService,$rootScope, $http) {
             var service = {};  
-            service.create_new_organizer = create_new_organizer;
-            service.get_distributor_token = get_distributor_token;
+            service.delete_event = delete_event;
             return service;
-            function create_new_organizer(param, callback, fallback) {
-                ReqService.CallAPI3(param, '/organizers', function (result) {
+            function delete_event(param, callback, fallback) {
+                ReqService.CallAPI3(param, '/events/' + param.id, function (result) {
                     if (result) {
                         callback(result);
                     }
-                }, fallback);
+                }, fallback, 'DELETE');
             }
 
-            function get_distributor_token(param, callback, fallback) {
-                ReqService.CallAPI3(param, 'auth/getDistributorAccessToken', function (result) {
-                    if (result) {
-                        callback(result);
-                    }
-                }, fallback);
-            }
         }])
 })(window.angular, window.buildfire);

@@ -2,11 +2,12 @@
 	<div ng-bind-html="stream_embed"></div>
 </div>
  -->
- <div ng-controller="BingewaveCtrl" ng-cloak>
+<div ng-controller="BingewaveCtrl" ng-cloak>
 	<div class="head" ng-show="pinnedPost" id="pinnedPost" style="height: 100%;">
 	</div>
 
-	<h3 ng-if="show_conference" style="text-align: center;">{{event.title}} <button type="button" class="btn btn-primary" ng-click="home()">Leave</button></h3>
+	<h3 ng-if="show_conference" style="text-align: center;">{{event.title}} <button type="button"
+			class="btn btn-primary" ng-click="home()">Leave</button></h3>
 
 	<!-- <iframe allow="camera; microphone" width="100%" height="600" ng-if="show_conference"
 		ng-src="{{trustSrc(conference_url)}}"></iframe>
@@ -19,8 +20,7 @@
 	onload="scroll(0,0)" id="{{event_id}}:59" style="width: 100%; height: 616px;"
 	height="616" ng-bind-html="stream_embed" allow="camera; microphone"></div> -->
 
-	<div allow="camera; microphone" width="100%" height="600"
-	 ng-bind-html="stream_embed"></div>
+	<div allow="camera; microphone" width="100%" height="600" ng-bind-html="stream_embed"></div>
 
 
 	<!-- <button ng-if="!show_conference" type="button" class="btn btn-primary"
@@ -66,8 +66,8 @@
 		</div> -->
 		<div class="form-group">
 			<label>Is Event Private?</label>
-			<select class="form-control" name="private_event" id="private_event" ng-model="event.private_event"
-				required>
+			<select class="form-control" name="private_event" id="private_event"
+				ng-model="event.private_event" required>
 				<option value=true>Yes</option>
 				<option value=false>No</option>
 			</select>
@@ -89,6 +89,7 @@
 
 	<h4>Live Events</h4>
 	<h6 ng-show="loading" style="text-align: center;">Loading</h6>
+	<h6 ng-if="events.length === 0 && !loading" style="text-align: center;">No events yet</h6>
 	<div class="social-item" ng-repeat="event in events | limitTo:pageSize">
 		<div class="head">
 			<div class="social-profile-photo">
@@ -102,7 +103,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="footer">
 			<div class="status-footer">
 				<a class="likes social-icon ng-cloak" ng-click="showMoreOptions(event)">
@@ -111,11 +112,12 @@
 			</div>
 		</div>
 	</div>
-	<a href="" ng-if="!show_conference && !show_stream" ng-click="createEventTitle()" class="text-primary float">
+	<a href="" ng-if="!show_conference && !show_stream" ng-click="createEventTitle()"
+		class="text-primary float">
 		<span class="material-icons my-float">
 			add
-			</span>
-		</a>
+		</span>
+	</a>
 	<button ng-if="events.length > 9" ng-show="!loading" type="button" class="btn-primary"
 		style="margin-left: auto !important; margin-right: auto !important;"
 		ng-click="showMore()">Show more</button>

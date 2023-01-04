@@ -66,82 +66,71 @@
 					if (err) return console.error("Error while retrieving your bingeWaveAuthToken", err);
 					console.log("bingeWaveAuthToken", result.data);
 					if(angular.equals(result.data, {})){
-							buildfire.auth.getCurrentUser((err, user) => {
-								if (err) return console.error(err);
-									console.log(user);
-									var dataOrganizer = {
-										"name": user.displayName,
-										"domain":  user.firstName + "-nixcode",
-										"description": user.email,
-										"type":  "13"
+						buildfire.auth.getCurrentUser((err, user) => {
+							if (err) return console.error(err);
+							console.log(user);
+								// if (err) return console.error("Error while retrieving your data",err);
+								if (angular.equals(RequestService.getPreferences(), {})) {
+									console.log("your organizer account isn't set up");
+									buildfire.dialog.alert({
+										message: "Your organizer account isn't set up!",
+									  });
+									  $scope.loading = false;
+								}else{
+									console.log("bingeWaveConfig From my service",RequestService.getPreferences());
+									$scope.organizerInfo = {
+										organizer_id: '',
+										auth_token: ''
 									}
-									// console.log(dataOrganizer);
-									APIService.create_new_organizer(dataOrganizer, function (
-									result) {
-										console.log(result.data)
-										var credentials = {
-											key: result.data.data.credentials.key,
-											secret:result.data.data.credentials.secret
-										}
-										APIService.get_distributor_token(credentials, function (
-											result) {
-												console.log(result.data.data.auth_token);
-												console.log(result.data.data.organizer.id);
-												var dataSyncOrganizer = {
-													"first_name": user.firstName,
-													"last_name": user.lastName,
-													"email": user.email,
-													"organizer_id": result.data.data.organizer.id,
-													"auth_token": result.data.data.auth_token
-												}
-												var dataSetRole = {
-													"account_id": result.data.data.organizer.id,
-													"role": "is_member"
-												}
-												APIService.sync_organizer(dataSyncOrganizer, function (
-													res) {
-														setTimeout(function() {
-															console.log("user token should be here " + res.data.auth_token);
-															$scope.authToken = { token : res.data.data.auth_token};
-															buildfire.userData.save(
-																$scope.authToken,
-																"bingeWaveAuthToken",
-																(err, result) => {
-																	if (err) return console.error("Error while saving auth token", err);
-																	console.log("Insert successful", result);
-																	APIService.get_all_events(queryParam, function (result) {
-																		$scope.events = result.data.data;
-																		console.log($scope.events)
-																		$scope.loading = false;
-												   
-																   }, function (response) {
-																	   console.log(response);
-																   
-																   });
+									$scope.organizerInfo.organizer_id = RequestService.getPreferences().organizer_id;
+									$scope.organizerInfo.auth_token = RequestService.getPreferences().auth_token;
+									var dataSyncOrganizer = {
+										"first_name": user.firstName,
+										"last_name": user.lastName,
+										"email": user.email,
+										"organizer_id": $scope.organizerInfo.organizer_id,
+										"auth_token": $scope.organizerInfo.auth_token
+									}
+									var dataSetRole = {
+										"account_id": $scope.organizerInfo.organizer_id,
+										"role": "is_member"
+									}
+									console.log(dataSyncOrganizer)
+									APIService.sync_organizer(dataSyncOrganizer,function (res) {
+												setTimeout(function () {
+														console.log("user token should be here " + res.data.auth_token);
+														$scope.authToken = {
+																token: res.data.data.auth_token
+															};
+														buildfire.userData.save($scope.authToken,"bingeWaveAuthToken",(err,result) => {
+																	if (err)
+																		return console.error("Error while saving auth token",err);
+																	console.log("Insert successful",result);
+																	APIService.get_all_events(queryParam,function (result) {
+																				$scope.events = result.data.data;
+																				console.log($scope.events)
+																				$scope.loading = false;
+																			},function (response) {
+																				console.log(response);
+																			}
+																		);
 																	// $scope.authToken = resp.data.auth_token;
 																	// $window.BingewaveConnector.init({auth_token : result.data.data.auth_token });
-																});
-														  }, 3000);
-
-														APIService.set_role(dataSetRole, function (
-															result) {
-																console.log(result.data)
-																
-															}, function (response) {
-																console.log(response)
-															});
-														
-													}, function (response) {
-														console.log(response)
-													});
-											}, function (response) {
-												console.log(response);
-											});
-									}, function (response) {
-										console.log(response)
+																}
+															);
+													},3000);
+	
+												APIService.set_role(dataSetRole,function (result) {
+															console.log(result.data)
+														},function (response) {
+															console.log(response)
+														});
+											},
+											function (response) {
+												console.log(response)
 									});
-					
-							});
+								}
+						});
 						
 					}else{
 						console.log(result.data);
@@ -235,36 +224,6 @@
 				$scope.trustSrc = function (src) {
 					return $sce.trustAsResourceUrl(src);
 				};
-
-				$scope.createOrganizer = function(){
-					var organizer = {
-						// account_id: "92012c17-3ea5-440f-948b-90b8a5cb778d",
-						name: "kcp4",
-						description: "kcp4 des",
-						type: "13",
-						domain: "kcp4",
-					}
-					APIService.create_new_organizer(organizer, function (
-					result) {
-						console.log(result.data.data);
-					var credentials = {
-						key: result.data.data.credentials.key,
-						secret:result.data.data.credentials.secret
-					}
-					APIService.get_distributor_token(credentials, function (
-						result) {
-							console.log(result.data.data.auth_token);
-							console.log(result.data.data.organizer.id);
-						}, function (response) {
-							console.log(response)
-						});
-					}, function (response) {
-						console.log(response)
-					});
-
-			
-
-				}
 
 				$scope.createEventTitle = function(){
 					$scope.showNewEventTitle = true;
@@ -567,7 +526,8 @@
 				$scope.showMoreOptions = function (event) {
 					WidgetBingewave.modalPopupWidgetBingewaveId = event.id;
 					WidgetBingewave.SocialItems.authenticateUser(null, (err, user) => {
-						if (err) return console.error("Getting user failed.", err);
+						if (err) return console.error("Getting user failed.",
+							err);
 						if (user) {
 							Modals.showMoreOptionsModal({
 								'postId': event.id,
@@ -575,23 +535,25 @@
 								'socialItemUserId': WidgetBingewave.SocialItems.userDetails.userId,
 								'languages': $scope.languages
 							}).then(function (data) {
-								if(data === WidgetBingewave.SocialItems.languages.reportEvent) {
-									SocialDataStore.reportEvent({
-										reportedAt: new Date(),
-										reporter: WidgetBingewave.SocialItems.userDetails.email,
-										reported: event.title,
-										// reportedUserID: WidgetBingewave.post.userId,
-										// text: WidgetBingewave.post.text,
-										// postId: WidgetBingewave.post.id,
-										wid: WidgetBingewave.SocialItems.wid
-									});
-								}
-							},
+									if (data === WidgetBingewave.SocialItems
+										.languages.reportEvent) {
+										SocialDataStore.reportEvent({
+											reportedAt: new Date(),
+											reporter: WidgetBingewave.SocialItems.userDetails.email,
+											reported: event,
+											// reportedUserID: WidgetBingewave.post.userId,
+											// text: WidgetBingewave.post.text,
+											// postId: WidgetBingewave.post.id,
+											wid: WidgetBingewave.SocialItems.wid
+										});
+									}
+								},
 								function (err) {
-									console.log('Error in Error handler--------------------------', err);
+									console.log('Error in Error handler--------------------------',err);
 								});
 						}
 					});
+					$scope.$digest();
 				};
 
 				WidgetBingewave.setAppTheme = function () {

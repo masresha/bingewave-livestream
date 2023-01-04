@@ -1,4 +1,4 @@
-app.controller('ReportsCtrl', ['$scope', function ($scope) {
+app.controller('ReportsCtrl', ['$scope','ApService', function ($scope, ApService) {
 
     $scope.data = {};
 
@@ -23,6 +23,30 @@ app.controller('ReportsCtrl', ['$scope', function ($scope) {
                 if (data) console.log(data);
             });
         });
+        searchTableHelper.onRowDeleted = (obj, tr) => {
+            console.log("Record Delete from reports", obj, tr);
+            var eventToBeDeleted = {
+                "id": obj.data.reported.id
+            }
+
+            ApService.delete_event(eventToBeDeleted, function (result) {
+               console.log(result);
+               buildfire.publicData.get("reports_", (err, result) => {
+                if (err) return console.error("Error while retrieving your data", err);
+                console.log("reports_", result.data);
+                var report_index = result.data.findIndex(el => el.reported.id === obj.data.reported.id);
+                result.data.splice(report_index, 1);
+                console.log(result.data); 
+                buildfire.publicData.save(result.data, "reports_", (err, result) => {
+                    if (err) return console.error("Error while saving your data", err);
+                    console.log("Data saved successfully", result);
+                     $scope.$digest();
+                  });
+                });
+            }, function (response) {
+                console.log(response);
+            });
+        }
         searchTableHelper.onEditRow = (obj, tr) => {
             buildfire.dialog.confirm({
                 message: "Are you sure you want to ban this user? This action will erase all posts and comments made by this user.",

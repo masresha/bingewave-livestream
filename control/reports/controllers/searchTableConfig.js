@@ -1,17 +1,17 @@
 
 const searchTableConfig ={
 	options:{
-		showEditButton:true
-		,showDeleteButton:false
+		showEditButton:false,
+		showDeleteButton:true
 	}
 
 	// reportedAt: new Date(),
-	// 									reporter: WidgetBingewave.SocialItems.userDetails.email,
-	// 									reported: event.title,
-	// 									// reportedUserID: WidgetBingewave.post.userId,
-	// 									// text: WidgetBingewave.post.text,
-	// 									// postId: WidgetBingewave.post.id,
-	// 									wid: WidgetBingewave.SocialItems.wid
+	//reporter: WidgetBingewave.SocialItems.userDetails.email,
+	//reported: event.title,
+	//// reportedUserID: WidgetBingewave.post.userId,
+	//// text: WidgetBingewave.post.text,
+	//// postId: WidgetBingewave.post.id,
+	//wid: WidgetBingewave.SocialItems.wid
 	,columns:[
 		{
 			header:"Time/Date"
@@ -22,10 +22,10 @@ const searchTableConfig ={
 		}
 		,{
 			header:"Reported"
-			,data:"${data.reported}"
+			,data:"${data.reported.title}"
 			,type:"string"
 			,width:"150px"
-			,sortBy: 'data.reported'
+			,sortBy: 'data.reported.title'
 		}
 		,{
 			header:"Reporter"
