@@ -57,7 +57,6 @@
 					ContentHome.data.content.template_id = ContentHome.template_id;
                     ContentHome.data.content.name = ContentHome.name;
                     ContentHome.data.content.description = ContentHome.description;
-
 					console.log(ContentHome.data.content)
 					buildfire.datastore.save(
 						ContentHome.data.content,

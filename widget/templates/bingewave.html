@@ -1,124 +1,14 @@
-<!-- <div ng-controller="BingewaveCtrl">
-	<div ng-bind-html="stream_embed"></div>
-</div>
- -->
 <div ng-controller="BingewaveCtrl" ng-cloak>
-	<div class="head" ng-show="pinnedPost" id="pinnedPost" style="height: 100%;">
-	</div>
-
-	<h3 ng-if="show_conference" style="text-align: center;">{{event.title}} <button type="button"
-			class="btn btn-primary" ng-click="home()">Leave</button></h3>
-
-	<!-- <iframe allow="camera; microphone" width="100%" height="600" ng-if="show_conference"
-		ng-src="{{trustSrc(conference_url)}}"></iframe>
-	<iframe allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
-		ng-if="show_stream" ng-src="{{trustSrc(stream_url)}}" scrolling="no" frameborder="0"
-		onload="scroll(0,0)" id="{{event_id}}:59" style="width: 100%; height: 616px;"
-		height="616"></iframe> -->
-	<!-- <div allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
-	ng-if="show_stream" scrolling="no" frameborder="0"
-	onload="scroll(0,0)" id="{{event_id}}:59" style="width: 100%; height: 616px;"
-	height="616" ng-bind-html="stream_embed" allow="camera; microphone"></div> -->
-
 	<div allow="camera; microphone" width="100%" height="600" ng-bind-html="stream_embed"></div>
 
-
-	<!-- <button ng-if="!show_conference" type="button" class="btn btn-primary"
-		ng-click="createEventTitle()">{{languages.createEventButton}}</button> -->
-	<form ng-if="showNewEventTitle" name="eventForm" ng-submit="createEvent()" style="padding: 10px"
-		novalidate>
-		<div class="form-group">
-			<label>Title</label>
-			<input type="text" name="title" id="title" class="form-control"
-				ng-model="event.event_title" placeholder="Enter Your Event Title" ng-required="true"
-				required>
-			<span ng-show="eventForm.title.$invalid">
-				Title is required.</span>
-		</div>
-		<div class="form-group">
-			<label>Description</label>
-			<input type="text" name="description" id="description" class="form-control"
-				ng-model="event.event_description" placeholder="Enter Your Event Description"
-				ng-required="true" required>
-			<span ng-show="eventForm.description.$invalid">
-				Description is required.</span>
-		</div>
-		<!-- <div class="form-group">
-			<label>Event Type</label>
-			<select class="form-control" name="event_type" id="event_type" ng-model="event.type"
-				required>
-				<option value="1">Pre-Reocrded Event Content</option>
-				<option value="5">Video Chat/Video Conference</option>
-				<option value="7">Instant</option>
-			</select>
-			<span ng-show="eventForm.event_type.$invalid">
-				Event Type is required.</span>
-		</div>
-		<div class="form-group" ng-if="event.type === '1'">
-			<label>Video Contents</label>
-			<select style="border-radius:0;" name="content" id="content" class="form-control"
-				ng-model="event.video_id"
-				ng-options="my_video.id as my_video.title for my_video in my_videos">
-				<option value="">Select Video</option>
-			</select>
-			<span ng-show="eventForm.content.$invalid">
-				Video is required.</span>
-		</div> -->
-		<div class="form-group">
-			<label>Is Event Private?</label>
-			<select class="form-control" name="private_event" id="private_event"
-				ng-model="event.private_event" required>
-				<option value=true>Yes</option>
-				<option value=false>No</option>
-			</select>
-			<span ng-show="eventForm.private_event.$invalid">
-				Event Privacy is required.</span>
-		</div>
-		<div class="form-group">
-			<label>Date</label>
-			<input type="date" name="date" id="date" class="form-control"
-				ng-model="event.requested_date_1" ng-required="true" required>
-			<span ng-show="eventForm.date.$invalid">
-				Event Date is required.</span>
-		</div>
-		<div class="wrapper">
-			<button type="submit" class="btn btn-primary">Create Live Event</button>
-			<button type="button" ng-click="closeNewEvent()" class="btn btn-warning">Close</button>
-		</div>
-	</form>
-
 	<h4>Live Events</h4>
-	<h6 ng-show="loading" style="text-align: center;">Loading</h6>
-	<h6 ng-if="events.length === 0 && !loading" style="text-align: center;">No events yet</h6>
-	<div class="social-item" ng-repeat="event in events | limitTo:pageSize">
+	<div class="social-item">
 		<div class="head">
 			<div class="social-profile-photo">
 				<p class="text-primary ellipsis">
-					<a class="ng-cloak" ng-click="goToEvent(event)">{{event.title}}</a>
+					<a class="ng-cloak" ng-click="goToEvent()">Open This Event</a>
 				</p>
-				<div ng-if="event.title">
-					<p class="time-ago opacity-seventy ng-cloak">
-						{{WidgetBingewave.getDuration(event.date) | convertTimeFormat}}
-					</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="footer">
-			<div class="status-footer">
-				<a class="likes social-icon ng-cloak" ng-click="showMoreOptions(event)">
-					<span class="material-icons-outlined">more_horiz</span>
-				</a>
 			</div>
 		</div>
 	</div>
-	<a href="" ng-if="!show_conference && !show_stream" ng-click="createEventTitle()"
-		class="text-primary float">
-		<span class="material-icons my-float">
-			add
-		</span>
-	</a>
-	<button ng-if="events.length > 9" ng-show="!loading" type="button" class="btn-primary"
-		style="margin-left: auto !important; margin-right: auto !important;"
-		ng-click="showMore()">Show more</button>
 </div>
