@@ -1,5 +1,6 @@
 <div ng-controller="BingewaveCtrl" ng-cloak>
-	<div allow="camera; microphone" width="100%" height="600" ng-bind-html="stream_embed"></div>
+	<!-- <div allow="camera; microphone" width="100%" height="600" ng-bind-html="stream_embed"></div> -->
+	<iframe allow="camera; microphone" width="100%" height="600" ng-src="{{trustSrc(conference_url)}}"></iframe>
 
 	<h4>Live Events</h4>
 	<div class="social-item">

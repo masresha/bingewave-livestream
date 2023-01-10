@@ -70,12 +70,13 @@
 
 				//triggered when you open an event from the list
 				$scope.goToEvent = function(){
-					$scope.conference_url = '<bw:widget env="prod" type="webrtc" id="e94352e3-f164-4bd6-8b33-6f9f03dbef66"></bw:widget>';
-					$scope.stream_embed = $sce.trustAsHtml($scope.conference_url); 
-					setTimeout(() => {
-						console.log("Test I am running");
-						$window.BingewaveConnector.parseTags();
-					}, 1000);
+					$scope.conference_url = "https://widgets.bingewave.com/webrtc/e94352e3-f164-4bd6-8b33-6f9f03dbef66";
+					//$scope.conference_url = '<bw:widget env="prod" type="webrtc" id="e94352e3-f164-4bd6-8b33-6f9f03dbef66"></bw:widget>';
+					//$scope.stream_embed = $sce.trustAsHtml($scope.conference_url); 
+					// setTimeout(() => {
+					// 	console.log("Test I am running");
+					// 	$window.BingewaveConnector.parseTags();
+					// }, 1000);
 
 				}
 
