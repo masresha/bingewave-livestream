@@ -11,4 +11,15 @@
 			</div>
 		</div>
 	</div>
+	
+	<div>
+		<video id="gum-local" autoplay playsinline></video>
+		<button ng-click="startCameraBroadcast()">Test Open WebRTC Camera</button>
+	</div>
+	<button ng-click="isAvailable()">
+		isCameraAvailable
+	</button>
+	<button ng-click="requestAuth()">
+		requestAuthorization
+	</button>
 </div>

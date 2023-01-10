@@ -79,6 +79,51 @@
 
 				}
 
+				const constraints = window.constraints = {
+					audio: false,
+					video: true
+				};
+
+				$scope.startCameraBroadcast = async function () {
+					try {
+						const stream = await navigator.mediaDevices.getUserMedia(constraints);
+						const video = document.querySelector('video');
+						const videoTracks = stream.getVideoTracks();
+
+						console.log('Got stream with constraints:', constraints);
+						console.log(`Using video device: ${videoTracks[0].label}`);
+						video.srcObject = stream;
+
+						[window.track] = stream.getVideoTracks();
+
+					} catch (e) {
+						if(e) {
+							buildfire.dialog.alert({ message: "Permissions have not been granted to use your camera, ' + 'you need to allow the page access to your devices in ' + 'order for the demo to work." })
+						}
+					}
+				}
+
+				$scope.requestAuth = function () {
+					buildfire.services.camera.requestAuthorization(null, (err, result) => {
+						if (err) {
+							console.log(`requestAuthorization error: ${err}`);
+							buildfire.dialog.alert({ message: "requestAuthorization error " + JSON.stringify(err) });
+						} else {
+							buildfire.dialog.alert({ message: result });
+						}
+					});
+				}
+
+				$scope.isAvailable = function () {
+					buildfire.services.camera.isAuthorized(null, (err, result) => {
+						if (err) {
+							buildfire.dialog.alert({ message: "isCameraAvailable error " + JSON.stringify(err) });
+						} else {
+							buildfire.dialog.alert({ message: result });
+						}
+					});
+				}
+
 				$scope.showMoreOptions = function (event) {
 					WidgetBingewave.modalPopupWidgetBingewaveId = event.id;
 					WidgetBingewave.SocialItems.authenticateUser(null, (err, user) => {
